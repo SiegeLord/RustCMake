@@ -29,9 +29,10 @@ rust_crate(EXAMPLE1_TEST examples/example1.rs test "${TEST_DEPS}" --test)
 rust_crate(EXAMPLE2_TEST examples/example2.rs test "${TEST_DEPS}" --test)
 
 add_custom_target(test
-                  COMMAND (./example1 & ./example2) || true
+                  COMMAND ./example1 || true
+                  COMMAND ./example2 || true
                   WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/test"
-                  DEPENDS ${EXAMPLE1_TEST_DEPS})
+                  DEPENDS ${EXAMPLE1_TEST_DEPS} ${EXAMPLE2_TEST_DEPS})
 
 
 # Build documentation
