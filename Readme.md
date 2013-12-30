@@ -8,7 +8,7 @@ cmake .. -DCMAKE_INSTALL_PREFIX=/tmp
 make -j
 make test
 make doc -j
-sudo make install
+make install
 
 cd examples
 ./example1
