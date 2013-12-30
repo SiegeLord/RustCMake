@@ -1,0 +1,4 @@
+find_program(RUSTC_EXECUTABLE rustc)
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(rustc DEFAULT_MSG RUSTC_EXECUTABLE)
+mark_as_advanced(RUSTC_EXECUTABLE)

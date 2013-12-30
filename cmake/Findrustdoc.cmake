@@ -1,0 +1,4 @@
+find_program(RUSTDOC_EXECUTABLE rustdoc)
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(rustdoc DEFAULT_MSG RUSTDOC_EXECUTABLE)
+mark_as_advanced(RUSTDOC_EXECUTABLE)
