@@ -1,4 +1,4 @@
-An example of using CMake with Rust (using not yet merged changes!).
+An example of using CMake with Rust.
 
 Try it!
 ~~~
