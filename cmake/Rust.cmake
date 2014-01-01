@@ -8,7 +8,9 @@ if(NOT RUSTDOC_FLAGS)
 endif()
 mark_as_advanced(RUSTDOC_FLAGS)
 
-function(get_rust_deps root_file out_var)
+function(get_rust_deps local_root_file out_var)
+	set(root_file "${CMAKE_SOURCE_DIR}/${local_root_file}")
+
 	set(dep_dir "${CMAKE_BINARY_DIR}/CMakeFiles/.cmake_rust_dependencies")
 	file(MAKE_DIRECTORY "${dep_dir}")
 	
@@ -36,10 +38,10 @@ function(get_rust_deps root_file out_var)
 	set(${out_var} "${crate_deps_relative}" PARENT_SCOPE)
 endfunction()
 
-macro(rust_crate target_name local_root_file target_dir dependencies)
+macro(rust_crate target_name local_root_file target_dir other_dependencies)
 	set(root_file "${CMAKE_SOURCE_DIR}/${local_root_file}")
 	
-	get_rust_deps(${root_file} crate_deps_list ${ARGN})
+	get_rust_deps(${local_root_file} crate_deps_list ${ARGN})
 	
 	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${ARGN} --crate-file-name "${root_file}"
 	                OUTPUT_VARIABLE crate_filename
@@ -53,7 +55,7 @@ macro(rust_crate target_name local_root_file target_dir dependencies)
 	add_custom_command(OUTPUT "${crate_filename}"
 	                   COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${ARGN} --out-dir "${CMAKE_BINARY_DIR}/${target_dir}" "${root_file}"
 	                   DEPENDS ${crate_deps_list}
-	                   DEPENDS ${dependencies}
+	                   DEPENDS ${other_dependencies}
 	                   COMMENT "${comment}")
 
 	add_custom_target("${target_name}"
@@ -64,10 +66,10 @@ macro(rust_crate target_name local_root_file target_dir dependencies)
 	set("${target_name}_DEPS" "${target_name};${crate_filename}")
 endmacro(rust_crate) 
 
-macro(rust_doc target_name local_root_file target_dir dependencies)
+macro(rust_doc target_name local_root_file target_dir other_dependencies)
 	set(root_file "${CMAKE_SOURCE_DIR}/${local_root_file}")
 	
-	get_rust_deps(${root_file} crate_deps_list ${ARGN})
+	get_rust_deps(${local_root_file} crate_deps_list ${ARGN})
 	
 	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${ARGN} --crate-name "${root_file}"
 	                OUTPUT_VARIABLE crate_name
@@ -83,7 +85,7 @@ macro(rust_doc target_name local_root_file target_dir dependencies)
 	                   COMMAND ${CMAKE_COMMAND} -E touch "${doc_dir}"
 	                   COMMAND ${CMAKE_COMMAND} -E touch "${src_dir}"
 	                   DEPENDS ${crate_deps_list}
-	                   DEPENDS ${dependencies})
+	                   DEPENDS ${other_dependencies})
 
 	add_custom_target("${target_name}"
 	                  DEPENDS "${doc_dir}"
