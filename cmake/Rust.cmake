@@ -38,15 +38,12 @@ function(get_rust_deps local_root_file out_var)
 	set(${out_var} "${crate_deps_relative}" PARENT_SCOPE)
 endfunction()
 
-macro(rust_crate target_name local_root_file target_dir other_dependencies)
+macro(rust_crate target_name local_root_file target_dir dependencies)
 	set(root_file "${CMAKE_SOURCE_DIR}/${local_root_file}")
-	
-	get_rust_deps(${local_root_file} crate_deps_list ${ARGN})
 	
 	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${ARGN} --crate-file-name "${root_file}"
 	                OUTPUT_VARIABLE crate_filename
 	                OUTPUT_STRIP_TRAILING_WHITESPACE)
-	
 	
 	set(comment "Building ${target_dir}/${crate_filename}")
 	set(crate_filename "${CMAKE_BINARY_DIR}/${target_dir}/${crate_filename}")
@@ -55,7 +52,7 @@ macro(rust_crate target_name local_root_file target_dir other_dependencies)
 	add_custom_command(OUTPUT "${crate_filename}"
 	                   COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${ARGN} --out-dir "${CMAKE_BINARY_DIR}/${target_dir}" "${root_file}"
 	                   DEPENDS ${crate_deps_list}
-	                   DEPENDS ${other_dependencies}
+	                   DEPENDS ${dependencies}
 	                   COMMENT "${comment}")
 
 	add_custom_target("${target_name}"
@@ -63,13 +60,17 @@ macro(rust_crate target_name local_root_file target_dir other_dependencies)
 	
 	set("${target_name}_ARTIFACTS" "${crate_filename}")
 	# CMake Bug #10082
-	set("${target_name}_DEPS" "${target_name};${crate_filename}")
-endmacro(rust_crate) 
+	set("${target_name}_FULL_TARGET" "${target_name};${crate_filename}")
+endmacro(rust_crate)
 
-macro(rust_doc target_name local_root_file target_dir other_dependencies)
-	set(root_file "${CMAKE_SOURCE_DIR}/${local_root_file}")
-	
+macro(rust_crate_auto target_name local_root_file target_dir other_dependencies)
 	get_rust_deps(${local_root_file} crate_deps_list ${ARGN})
+	
+	rust_crate_fast("{target_name}" "${local_root_file}" "${target_dir}" "${crate_deps_list};${other_dependencies}" ${ARGN})
+endmacro(rust_crate_auto)
+
+macro(rust_doc target_name local_root_file target_dir dependencies)
+	set(root_file "${CMAKE_SOURCE_DIR}/${local_root_file}")
 	
 	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${ARGN} --crate-name "${root_file}"
 	                OUTPUT_VARIABLE crate_name
@@ -85,7 +86,7 @@ macro(rust_doc target_name local_root_file target_dir other_dependencies)
 	                   COMMAND ${CMAKE_COMMAND} -E touch "${doc_dir}"
 	                   COMMAND ${CMAKE_COMMAND} -E touch "${src_dir}"
 	                   DEPENDS ${crate_deps_list}
-	                   DEPENDS ${other_dependencies})
+	                   DEPENDS ${dependencies})
 
 	add_custom_target("${target_name}"
 	                  DEPENDS "${doc_dir}"
@@ -93,5 +94,11 @@ macro(rust_doc target_name local_root_file target_dir other_dependencies)
 	
 	set("${target_name}_ARTIFACTS" "${doc_dir};${src_dir}")
 	# CMake Bug #10082
-	set("${target_name}_DEPS" "${target_name};${doc_dir};${src_dir}")
+	set("${target_name}_FULL_TARGET" "${target_name};${doc_dir};${src_dir}")
 endmacro(rust_doc)
+
+macro(rust_doc_auto target_name local_root_file target_dir other_dependencies)
+	get_rust_deps(${local_root_file} crate_deps_list ${ARGN})
+	
+	rust_doc("{target_name}" "${local_root_file}" "${target_dir}" "${crate_deps_list};${other_dependencies}" ${ARGN})
+endmacro(rust_doc_auto)
