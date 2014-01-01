@@ -14,3 +14,7 @@ cd examples
 ./example1
 ./example2
 ~~~
+
+License:
+
+The example files are released into the public domain, and the CMake modules are licensed under the zlib license (see file contents).
