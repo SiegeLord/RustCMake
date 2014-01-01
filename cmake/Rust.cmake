@@ -30,7 +30,7 @@ function(get_rust_deps local_root_file out_var)
 	set(dep_dir "${CMAKE_BINARY_DIR}/CMakeFiles/.cmake_rust_dependencies")
 	file(MAKE_DIRECTORY "${dep_dir}")
 	
-	message(STATUS "Getting Rust dependency info for crate root ${root_file}")
+	message(STATUS "Getting Rust dependency info for crate root ${local_root_file}")
 	
 	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${ARGN} --no-analysis --dep-info "${dep_dir}/deps" "${root_file}")
 	

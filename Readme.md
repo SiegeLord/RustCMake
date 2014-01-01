@@ -6,7 +6,7 @@ mkdir build
 cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=/tmp
 make -j
-make test
+make test -j
 make doc -j
 make install
 
