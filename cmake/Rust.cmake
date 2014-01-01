@@ -12,6 +12,8 @@ function(get_rust_deps root_file out_var)
 	set(dep_dir "${CMAKE_BINARY_DIR}/CMakeFiles/.cmake_rust_dependencies")
 	file(MAKE_DIRECTORY "${dep_dir}")
 	
+	message(STATUS "Getting Rust dependency info for crate root ${root_file}")
+	
 	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${ARGN} --no-analysis --dep-info "${dep_dir}/deps" "${root_file}")
 	
 	# Read and parse the dependency information
@@ -37,11 +39,12 @@ endfunction()
 macro(rust_crate target_name local_root_file target_dir dependencies)
 	set(root_file "${CMAKE_SOURCE_DIR}/${local_root_file}")
 	
+	get_rust_deps(${root_file} crate_deps_list ${ARGN})
+	
 	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${ARGN} --crate-file-name "${root_file}"
 	                OUTPUT_VARIABLE crate_filename
 	                OUTPUT_STRIP_TRAILING_WHITESPACE)
 	
-	get_rust_deps(${root_file} crate_deps_list ${ARGN})
 	
 	set(comment "Building ${target_dir}/${crate_filename}")
 	set(crate_filename "${CMAKE_BINARY_DIR}/${target_dir}/${crate_filename}")
@@ -64,11 +67,11 @@ endmacro(rust_crate)
 macro(rust_doc target_name local_root_file target_dir dependencies)
 	set(root_file "${CMAKE_SOURCE_DIR}/${local_root_file}")
 	
+	get_rust_deps(${root_file} crate_deps_list ${ARGN})
+	
 	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${ARGN} --crate-name "${root_file}"
 	                OUTPUT_VARIABLE crate_name
 	                OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-	get_rust_deps(${root_file} crate_deps_list ${ARGN})
 	
 	set(doc_dir "${CMAKE_BINARY_DIR}/${target_dir}/${crate_name}")
 	set(src_dir "${CMAKE_BINARY_DIR}/${target_dir}/src/${crate_name}")
