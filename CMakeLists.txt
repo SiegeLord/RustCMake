@@ -19,11 +19,11 @@ rust_crate(TEST src/lib.rs lib "${TEST_DEPS}")
 
 add_custom_target(library_target
                   ALL
-                  DEPENDS ${TEST_ARTIFACTS})
+                  DEPENDS ${TEST_FULL_TARGET})
 
 # Build examples
 rust_crate(EXAMPLE1 examples/example1.rs examples "${TEST_FULL_TARGET};${EXAMPLE1_DEPS}")
-rust_crate(EXAMPLE2 examples/example2.rs examples "${TEST_FULL_TARGET};${EXAMPLE2_DEPS}")
+rust_crate(EXAMPLE2 examples/example2.rs examples "${TEST_FULL_TARGET};${EXAMPLE1_DEPS}")
 
 add_custom_target(examples_target
                   ALL

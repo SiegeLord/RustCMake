@@ -101,7 +101,7 @@ endmacro(rust_crate)
 macro(rust_crate_auto target_name local_root_file target_dir other_dependencies)
 	get_rust_deps(${local_root_file} crate_deps_list ${ARGN})
 	
-	rust_crate_fast("{target_name}" "${local_root_file}" "${target_dir}" "${crate_deps_list};${other_dependencies}" ${ARGN})
+	rust_crate("${target_name}" "${local_root_file}" "${target_dir}" "${crate_deps_list};${other_dependencies}" ${ARGN})
 endmacro(rust_crate_auto)
 
 # Like rust_crate, but this time it generates documentation using rust_doc.
@@ -139,5 +139,5 @@ endmacro(rust_doc)
 macro(rust_doc_auto target_name local_root_file target_dir other_dependencies)
 	get_rust_deps(${local_root_file} crate_deps_list ${ARGN})
 	
-	rust_doc("{target_name}" "${local_root_file}" "${target_dir}" "${crate_deps_list};${other_dependencies}" ${ARGN})
+	rust_doc("${target_name}" "${local_root_file}" "${target_dir}" "${crate_deps_list};${other_dependencies}" ${ARGN})
 endmacro(rust_doc_auto)
