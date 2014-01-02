@@ -205,21 +205,17 @@ function(rust_doc local_root_file)
 	set(src_dir "${CMAKE_BINARY_DIR}/${OPT_DESTINATION}/src/${crate_name}")
 	file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/${OPT_DESTINATION}")
 	
-	add_custom_command(OUTPUT "${doc_dir}" "${src_dir}"
+	add_custom_command(OUTPUT "${doc_dir}/index.html" "${doc_dir}" "${src_dir}"
 	                   COMMAND ${RUSTDOC_EXECUTABLE} ${RUSTDOC_FLAGS} ${OPT_OTHER_RUSTDOC_FLAGS} -o "${CMAKE_BINARY_DIR}/${OPT_DESTINATION}" "${root_file}"
-	                   # Otherwise CMake will never stop remaking the documentation after a change that doesn't change the output
-	                   COMMAND ${CMAKE_COMMAND} -E touch "${doc_dir}"
-	                   COMMAND ${CMAKE_COMMAND} -E touch "${src_dir}"
 	                   DEPENDS ${crate_deps_list}
 	                   DEPENDS ${OPT_DEPENDS})
 
 	add_custom_target("${OPT_TARGET_NAME}"
-	                  DEPENDS "${doc_dir}"
-	                  DEPENDS "${src_dir}")
+	                  DEPENDS "${doc_dir}/index.html")
 	
 	set("${OPT_TARGET_NAME}_ARTIFACTS" "${doc_dir};${src_dir}" PARENT_SCOPE)
 	# CMake Bug #10082
-	set("${OPT_TARGET_NAME}_FULL_TARGET" "${OPT_TARGET_NAME};${doc_dir};${src_dir}" PARENT_SCOPE)
+	set("${OPT_TARGET_NAME}_FULL_TARGET" "${OPT_TARGET_NAME};${doc_dir}/index.html" PARENT_SCOPE)
 endfunction()
 
 # Like rust_crate_auto, but this time it generates documentation using rust_doc.
