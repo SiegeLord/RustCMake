@@ -23,3 +23,11 @@ find_program(RUSTC_EXECUTABLE rustc)
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(rustc DEFAULT_MSG RUSTC_EXECUTABLE)
 mark_as_advanced(RUSTC_EXECUTABLE)
+
+execute_process(COMMAND ${RUSTC_EXECUTABLE} -v
+                OUTPUT_VARIABLE RUSTC_TARGET_TRIPLE
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
+string(REGEX MATCH "host:[ \t](.*)" RUSTC_TARGET_TRIPLE "${RUSTC_TARGET_TRIPLE}")
+string(REGEX REPLACE "host:[ \t](.*)" "\\1" RUSTC_TARGET_TRIPLE "${RUSTC_TARGET_TRIPLE}")
+set(RUSTC_TARGET_TRIPLE "${RUSTC_TARGET_TRIPLE}" CACHE STRING "Target triple you can pass to rustc (not passed by default)")
+mark_as_advanced(RUSTC_TARGET_TRIPLE)
