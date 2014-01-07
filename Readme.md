@@ -1,5 +1,7 @@
 An example of using CMake with Rust.
 
+[![Build Status](https://travis-ci.org/SiegeLord/RustCMake.png)](https://travis-ci.org/SiegeLord/RustCMake)
+
 Try it!
 ~~~
 mkdir build
