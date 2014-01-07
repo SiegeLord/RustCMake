@@ -10,29 +10,29 @@ set(RUSTC_FLAGS "-L${CMAKE_BINARY_DIR}/lib")
 set(RUSTDOC_FLAGS "-L${CMAKE_BINARY_DIR}/lib")
 
 # Get the dependencies of all the crates
-get_rust_deps(src/lib.rs TEST_DEPS)
+get_rust_deps(src/lib.rs TESTLIB_DEPS)
 get_rust_deps(examples/example1.rs EXAMPLE1_DEPS)
 get_rust_deps(examples/example2.rs EXAMPLE2_DEPS)
 
 # Build the library
 rust_crate(src/lib.rs
-           TARGET_NAME TEST
+           TARGET_NAME TESTLIB
            DESTINATION lib
-           DEPENDS "${TEST_DEPS}")
+           DEPENDS "${TESTLIB_DEPS}")
 
 add_custom_target(library_target
                   ALL
-                  DEPENDS ${TEST_FULL_TARGET})
+                  DEPENDS ${TESTLIB_FULL_TARGET})
 
 # Build examples
 rust_crate(examples/example1.rs
            TARGET_NAME EXAMPLE1
            DESTINATION examples
-           DEPENDS "${TEST_FULL_TARGET};${EXAMPLE1_DEPS}")
+           DEPENDS "${TESTLIB_FULL_TARGET};${EXAMPLE1_DEPS}")
 rust_crate(examples/example2.rs
            TARGET_NAME EXAMPLE2
            DESTINATION examples
-           DEPENDS "${TEST_FULL_TARGET};${EXAMPLE2_DEPS}")
+           DEPENDS "${TESTLIB_FULL_TARGET};${EXAMPLE2_DEPS}")
 
 add_custom_target(examples_target
                   ALL
@@ -42,12 +42,12 @@ add_custom_target(examples_target
 rust_crate(examples/example1.rs
            TARGET_NAME EXAMPLE1_TEST
            DESTINATION test
-           DEPENDS "${TEST_FULL_TARGET};${EXAMPLE1_DEPS}"
+           DEPENDS "${TESTLIB_FULL_TARGET};${EXAMPLE1_DEPS}"
            OTHER_RUSTC_FLAGS --test)
 rust_crate(examples/example2.rs
            TARGET_NAME EXAMPLE2_TEST
            DESTINATION test
-           DEPENDS "${TEST_FULL_TARGET};${EXAMPLE2_DEPS}"
+           DEPENDS "${TESTLIB_FULL_TARGET};${EXAMPLE2_DEPS}"
            OTHER_RUSTC_FLAGS --test)
 
 add_custom_target(test
@@ -59,21 +59,21 @@ add_custom_target(test
 
 # Build documentation
 rust_doc(src/lib.rs
-         TARGET_NAME TEST_DOC
+         TARGET_NAME TESTLIB_DOC
          DESTINATION doc
-         DEPENDS "${TEST_DEPS}")
+         DEPENDS "${TESTLIB_DEPS}")
 rust_doc(examples/example1.rs
          TARGET_NAME EXAMPLE1_DOC
          DESTINATION doc
-         DEPENDS "${TEST_FULL_TARGET};${EXAMPLE1_DEPS}")
+         DEPENDS "${TESTLIB_FULL_TARGET};${EXAMPLE1_DEPS}")
 rust_doc(examples/example2.rs
          TARGET_NAME EXAMPLE2_DOC
          DESTINATION doc
-         DEPENDS "${TEST_FULL_TARGET};${EXAMPLE2_DEPS}")
+         DEPENDS "${TESTLIB_FULL_TARGET};${EXAMPLE2_DEPS}")
 
 add_custom_target(doc
-                  DEPENDS ${TEST_DOC_FULL_TARGET} ${EXAMPLE1_DOC_FULL_TARGET} ${EXAMPLE2_DOC_FULL_TARGET})
+                  DEPENDS ${TESTLIB_DOC_FULL_TARGET} ${EXAMPLE1_DOC_FULL_TARGET} ${EXAMPLE2_DOC_FULL_TARGET})
 
 # Install library
-install(FILES ${TEST_ARTIFACTS}
+install(FILES ${TESTLIB_ARTIFACTS}
         DESTINATION lib)
