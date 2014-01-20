@@ -111,25 +111,38 @@ function(rust_crate local_root_file)
 	set(root_file "${CMAKE_SOURCE_DIR}/${local_root_file}")
 
 	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${OPT_OTHER_RUSTC_FLAGS} --crate-file-name "${root_file}"
-	                OUTPUT_VARIABLE crate_filename
+	                OUTPUT_VARIABLE rel_crate_filenames
 	                OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-	set(comment "Building ${OPT_DESTINATION}/${crate_filename}")
-	set(crate_filename "${CMAKE_BINARY_DIR}/${OPT_DESTINATION}/${crate_filename}")
+	# Split up the names into a list
+	string(REGEX MATCHALL "[^\n\r]+" rel_crate_filenames "${rel_crate_filenames}")
+
+	set(comment "Building ")
+	set(crate_filenames "")
+	set(first TRUE)
+	foreach(name IN ITEMS ${rel_crate_filenames})
+		if(${first})
+			set(first FALSE)
+		else()
+			set(comment "${comment}, ")
+		endif()
+		set(comment "${comment}${OPT_DESTINATION}/${name}")
+		list(APPEND crate_filenames "${CMAKE_BINARY_DIR}/${OPT_DESTINATION}/${name}")
+	endforeach()
 	file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/${OPT_DESTINATION}")
 
-	add_custom_command(OUTPUT "${crate_filename}"
+	add_custom_command(OUTPUT ${crate_filenames}
 	                   COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${OPT_OTHER_RUSTC_FLAGS} --out-dir "${CMAKE_BINARY_DIR}/${OPT_DESTINATION}" "${root_file}"
 	                   DEPENDS ${crate_deps_list}
 	                   DEPENDS ${OPT_DEPENDS}
 	                   COMMENT "${comment}")
 
 	add_custom_target("${OPT_TARGET_NAME}"
-	                  DEPENDS "${crate_filename}")
+	                  DEPENDS ${crate_filenames})
 
-	set("${OPT_TARGET_NAME}_ARTIFACTS" "${crate_filename}" PARENT_SCOPE)
+	set("${OPT_TARGET_NAME}_ARTIFACTS" "${crate_filenames}" PARENT_SCOPE)
 	# CMake Bug #10082
-	set("${OPT_TARGET_NAME}_FULL_TARGET" "${OPT_TARGET_NAME};${crate_filename}" PARENT_SCOPE)
+	set("${OPT_TARGET_NAME}_FULL_TARGET" "${OPT_TARGET_NAME};${crate_filenames}" PARENT_SCOPE)
 endfunction()
 
 # Like rust_crate, but fetches the crate dependencies for you. This is convenient
