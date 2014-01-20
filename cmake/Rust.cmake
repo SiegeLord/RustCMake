@@ -63,16 +63,16 @@ function(get_rust_deps local_root_file out_var)
 	# Read and parse the dependency information
 	file(READ "${dep_dir}/deps" crate_deps)
 	file(REMOVE "${dep_dir}/deps")
-	string(REGEX REPLACE ".*:(.*)" "\\1" crate_deps "${crate_deps}")
+	string(REGEX REPLACE ".*: (.*)" "\\1" crate_deps "${crate_deps}")
 	string(STRIP "${crate_deps}" crate_deps)
 	string(REPLACE " " ";" crate_deps "${crate_deps}")
 
 	# Make the dependencies be relative to the source directory
 	set(crate_deps_relative "")
 	foreach(var IN ITEMS ${crate_deps})
+		file(TO_CMAKE_PATH "${var}" var)
 		file(RELATIVE_PATH var "${CMAKE_CURRENT_SOURCE_DIR}" "${var}")
 		list(APPEND crate_deps_relative "${var}")
-
 		# Hack to re-run CMake if the file changes
 		configure_file("${var}" "${dep_dir}/${var}" COPYONLY)
 	endforeach()
