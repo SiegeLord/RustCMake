@@ -10,7 +10,7 @@ set(RUSTC_FLAGS "-L${CMAKE_BINARY_DIR}/lib")
 set(RUSTDOC_FLAGS "-L${CMAKE_BINARY_DIR}/lib")
 
 # Get the dependencies of all the crates
-get_rust_deps(src/lib.rs TESTLIB_DEPS OTHER_RUSTC_FLAGS --rlib)
+get_rust_deps(src/lib.rs TESTLIB_DEPS)
 get_rust_deps(examples/example1.rs EXAMPLE1_DEPS)
 get_rust_deps(examples/example2.rs EXAMPLE2_DEPS)
 
