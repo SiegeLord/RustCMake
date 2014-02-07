@@ -19,7 +19,7 @@ rust_crate(src/lib.rs
            TARGET_NAME TESTLIB
            DESTINATION lib
            DEPENDS "${TESTLIB_DEPS}"
-           OTHER_RUSTC_FLAGS --rlib)
+           OTHER_RUSTC_FLAGS --crate-type dylib --crate-type rlib)
 
 add_custom_target(library_target
                   ALL
