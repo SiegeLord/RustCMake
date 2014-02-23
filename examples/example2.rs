@@ -1,6 +1,6 @@
 #[crate_id="example2"];
 
-extern crate test;
+extern crate test = "test#0.1";
 
 /// This is a function inside the example 2.
 pub fn example_function()
