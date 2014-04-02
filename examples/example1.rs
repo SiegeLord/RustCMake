@@ -1,4 +1,4 @@
-#[crate_id="example1"];
+#![crate_id="example1"]
 
 extern crate test = "test#0.1";
 
