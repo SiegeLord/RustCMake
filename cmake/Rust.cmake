@@ -55,14 +55,14 @@ mark_as_advanced(RUSTDOC_FLAGS)
 function(get_rust_deps local_root_file out_var)
 	cmake_parse_arguments("OPT" "COMPILE" "DESTINATION" "OTHER_RUSTC_FLAGS" ${ARGN})
 
-	set(root_file "${CMAKE_SOURCE_DIR}/${local_root_file}")
+	set(root_file "${CMAKE_CURRENT_SOURCE_DIR}/${local_root_file}")
 
-	set(dep_dir "${CMAKE_BINARY_DIR}/CMakeFiles/.cmake_rust_dependencies")
+	set(dep_dir "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/.cmake_rust_dependencies")
 	file(MAKE_DIRECTORY "${dep_dir}")
 
 	if(OPT_COMPILE)
-		file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/${OPT_DESTINATION}")
-		set(flags --out-dir "${CMAKE_BINARY_DIR}/${OPT_DESTINATION}")
+		file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${OPT_DESTINATION}")
+		set(flags --out-dir "${CMAKE_CURRENT_BINARY_DIR}/${OPT_DESTINATION}")
 		message(STATUS "Compiling and getting Rust dependency info for crate root ${local_root_file}")
 	else()
 		set(flags --no-analysis)
@@ -119,7 +119,7 @@ function(rust_crate local_root_file)
 		set(OPT_TARGET_NAME CRATE)
 	endif()
 
-	set(root_file "${CMAKE_SOURCE_DIR}/${local_root_file}")
+	set(root_file "${CMAKE_CURRENT_SOURCE_DIR}/${local_root_file}")
 
 	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${OPT_OTHER_RUSTC_FLAGS} --crate-file-name "${root_file}"
 	                OUTPUT_VARIABLE rel_crate_filenames
@@ -138,17 +138,18 @@ function(rust_crate local_root_file)
 			set(comment "${comment}, ")
 		endif()
 		set(comment "${comment}${OPT_DESTINATION}/${name}")
-		list(APPEND crate_filenames "${CMAKE_BINARY_DIR}/${OPT_DESTINATION}/${name}")
+		list(APPEND crate_filenames "${CMAKE_CURRENT_BINARY_DIR}/${OPT_DESTINATION}/${name}")
 	endforeach()
-	file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/${OPT_DESTINATION}")
+	file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${OPT_DESTINATION}")
 
 	add_custom_command(OUTPUT ${crate_filenames}
-	                   COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${OPT_OTHER_RUSTC_FLAGS} --out-dir "${CMAKE_BINARY_DIR}/${OPT_DESTINATION}" "${root_file}"
+	                   COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${OPT_OTHER_RUSTC_FLAGS} --out-dir "${CMAKE_CURRENT_BINARY_DIR}/${OPT_DESTINATION}" "${root_file}"
 	                   DEPENDS ${crate_deps_list}
 	                   DEPENDS ${OPT_DEPENDS}
 	                   COMMENT "${comment}")
 
 	add_custom_target("${OPT_TARGET_NAME}"
+	                  ALL
 	                  DEPENDS ${crate_filenames})
 
 	set("${OPT_TARGET_NAME}_ARTIFACTS" "${crate_filenames}" PARENT_SCOPE)
@@ -219,18 +220,18 @@ function(rust_doc local_root_file)
 		set(OPT_TARGET_NAME DOC)
 	endif()
 
-	set(root_file "${CMAKE_SOURCE_DIR}/${local_root_file}")
+	set(root_file "${CMAKE_CURRENT_SOURCE_DIR}/${local_root_file}")
 
 	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${OPT_OTHER_RUSTC_FLAGS} --crate-name "${root_file}"
 	                OUTPUT_VARIABLE crate_name
 	                OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-	set(doc_dir "${CMAKE_BINARY_DIR}/${OPT_DESTINATION}/${crate_name}")
-	set(src_dir "${CMAKE_BINARY_DIR}/${OPT_DESTINATION}/src/${crate_name}")
-	file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/${OPT_DESTINATION}")
+	set(doc_dir "${CMAKE_CURRENT_BINARY_DIR}/${OPT_DESTINATION}/${crate_name}")
+	set(src_dir "${CMAKE_CURRENT_BINARY_DIR}/${OPT_DESTINATION}/src/${crate_name}")
+	file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${OPT_DESTINATION}")
 
 	add_custom_command(OUTPUT "${doc_dir}/index.html" "${doc_dir}" "${src_dir}"
-	                   COMMAND ${RUSTDOC_EXECUTABLE} ${RUSTDOC_FLAGS} ${OPT_OTHER_RUSTDOC_FLAGS} -o "${CMAKE_BINARY_DIR}/${OPT_DESTINATION}" "${root_file}"
+	                   COMMAND ${RUSTDOC_EXECUTABLE} ${RUSTDOC_FLAGS} ${OPT_OTHER_RUSTDOC_FLAGS} -o "${CMAKE_CURRENT_BINARY_DIR}/${OPT_DESTINATION}" "${root_file}"
 	                   DEPENDS ${crate_deps_list}
 	                   DEPENDS ${OPT_DEPENDS})
 
