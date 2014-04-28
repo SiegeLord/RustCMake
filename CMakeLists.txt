@@ -6,8 +6,8 @@ find_package(rustc)
 find_package(rustdoc)
 include(Rust)
 
-set(RUSTC_FLAGS "-L${CMAKE_BINARY_DIR}/lib")
-set(RUSTDOC_FLAGS "-L${CMAKE_BINARY_DIR}/lib")
+set(RUSTC_FLAGS -L ${CMAKE_BINARY_DIR}/lib)
+set(RUSTDOC_FLAGS -L ${CMAKE_BINARY_DIR}/lib)
 
 # Get the dependencies of all the crates
 get_rust_deps(src/lib.rs TESTLIB_DEPS)
