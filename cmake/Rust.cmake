@@ -121,7 +121,7 @@ function(rust_crate local_root_file)
 
 	set(root_file "${CMAKE_SOURCE_DIR}/${local_root_file}")
 
-	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${OPT_OTHER_RUSTC_FLAGS} --crate-file-name "${root_file}"
+	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${OPT_OTHER_RUSTC_FLAGS} --print-file-name "${root_file}"
 	                OUTPUT_VARIABLE rel_crate_filenames
 	                OUTPUT_STRIP_TRAILING_WHITESPACE)
 
@@ -221,7 +221,7 @@ function(rust_doc local_root_file)
 
 	set(root_file "${CMAKE_SOURCE_DIR}/${local_root_file}")
 
-	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${OPT_OTHER_RUSTC_FLAGS} --crate-name "${root_file}"
+	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${OPT_OTHER_RUSTC_FLAGS} --print-crate-name "${root_file}"
 	                OUTPUT_VARIABLE crate_name
 	                OUTPUT_STRIP_TRAILING_WHITESPACE)
 

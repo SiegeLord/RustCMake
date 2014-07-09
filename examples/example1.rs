@@ -1,6 +1,4 @@
-#![crate_id="example1"]
-
-extern crate test = "test#0.1";
+extern crate cmake_test;
 
 /// This is a function inside the example 1.
 pub fn example_function()
@@ -16,5 +14,5 @@ fn example_test()
 
 fn main()
 {
-	test::other::test();
+	cmake_test::other::test();
 } 

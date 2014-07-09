@@ -1,6 +1,6 @@
 //! Test library compiled using CMake.
 
-#![crate_id="test#0.1"]
+#![crate_name="cmake_test"]
 #![crate_type="lib"]
 
 pub mod other;
