@@ -12,6 +12,7 @@ fn example_test()
 	example_function();
 }
 
+#[cfg(not(test))]
 fn main()
 {
 	cmake_test::other::test();
