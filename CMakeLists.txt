@@ -16,6 +16,7 @@ get_rust_deps(examples/example2.rs EXAMPLE2_DEPS)
 
 # Build the library
 rust_crate(src/lib.rs
+           ALL
            TARGET_NAME TESTLIB
            DESTINATION lib
            DEPENDS "${TESTLIB_DEPS}"
@@ -27,17 +28,15 @@ add_custom_target(library_target
 
 # Build examples
 rust_crate(examples/example1.rs
+           ALL
            TARGET_NAME EXAMPLE1
            DESTINATION examples
            DEPENDS "${TESTLIB_FULL_TARGET};${EXAMPLE1_DEPS}")
 rust_crate(examples/example2.rs
+           ALL
            TARGET_NAME EXAMPLE2
            DESTINATION examples
            DEPENDS "${TESTLIB_FULL_TARGET};${EXAMPLE2_DEPS}")
-
-add_custom_target(examples_target
-                  ALL
-                  DEPENDS ${EXAMPLE1_FULL_TARGET} ${EXAMPLE2_FULL_TARGET})
 
 # Build tests
 rust_crate(examples/example1.rs
