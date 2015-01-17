@@ -65,15 +65,15 @@ function(get_rust_deps local_root_file out_var)
 		set(flags --out-dir "${CMAKE_CURRENT_BINARY_DIR}/${OPT_DESTINATION}")
 		message(STATUS "Compiling and getting Rust dependency info for crate root ${local_root_file}")
 	else()
-		set(flags --no-analysis)
+		set(flags "-Zno-analysis")
 		message(STATUS "Getting Rust dependency info for crate root ${local_root_file}")
 	endif()
 
-	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${OPT_OTHER_RUSTC_FLAGS} ${flags} --dep-info "${dep_dir}/deps" "${root_file}")
+	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${OPT_OTHER_RUSTC_FLAGS} ${flags} --emit dep-info -o "${dep_dir}/deps" "${root_file}")
 
 	# Read and parse the dependency information
-	file(READ "${dep_dir}/deps" crate_deps)
-	file(REMOVE "${dep_dir}/deps")
+	file(READ "${dep_dir}/deps.d" crate_deps)
+	file(REMOVE "${dep_dir}/deps.d")
 	string(REGEX REPLACE ".*: (.*)" "\\1" crate_deps "${crate_deps}")
 	string(STRIP "${crate_deps}" crate_deps)
 	string(REPLACE " " ";" crate_deps "${crate_deps}")
@@ -128,7 +128,7 @@ function(rust_crate local_root_file)
 
 	set(root_file "${CMAKE_CURRENT_SOURCE_DIR}/${local_root_file}")
 
-	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${OPT_OTHER_RUSTC_FLAGS} --print-file-name "${root_file}"
+	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${OPT_OTHER_RUSTC_FLAGS} --print file-names "${root_file}"
 	                OUTPUT_VARIABLE rel_crate_filenames
 	                OUTPUT_STRIP_TRAILING_WHITESPACE)
 
@@ -244,7 +244,7 @@ function(rust_doc local_root_file)
 
 	set(root_file "${CMAKE_CURRENT_SOURCE_DIR}/${local_root_file}")
 
-	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${OPT_OTHER_RUSTC_FLAGS} --print-crate-name "${root_file}"
+	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${OPT_OTHER_RUSTC_FLAGS} --print crate-name "${root_file}"
 	                OUTPUT_VARIABLE crate_name
 	                OUTPUT_STRIP_TRAILING_WHITESPACE)
 
