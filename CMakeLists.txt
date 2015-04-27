@@ -4,9 +4,14 @@ project(test NONE)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 find_package(rustc)
 find_package(rustdoc)
+find_package(cargo)
 include(Rust)
 
-set(RUSTC_FLAGS -L ${CMAKE_BINARY_DIR}/lib)
+cargo_dependency(cargo
+                 PACKAGE_NAMES url
+                 PACKAGE_VERSIONS =0.2.31)
+
+set(RUSTC_FLAGS -L ${CMAKE_BINARY_DIR}/lib -L ${CMAKE_BINARY_DIR}/cargo/target/debug/deps)
 set(RUSTDOC_FLAGS -L ${CMAKE_BINARY_DIR}/lib)
 
 # Get the dependencies of all the crates
