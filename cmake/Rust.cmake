@@ -68,7 +68,6 @@ function(get_rust_deps local_root_file out_var)
 		execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${OPT_OTHER_RUSTC_FLAGS} ${flags} "${root_file}")
 	endif()
 
-	set(flags "-Zno-analysis")
 	message(STATUS "Getting Rust dependency info for crate root ${local_root_file}")
 
 	execute_process(COMMAND ${RUSTC_EXECUTABLE} ${RUSTC_FLAGS} ${OPT_OTHER_RUSTC_FLAGS} ${flags} --emit dep-info -o "${dep_dir}/deps.d" "${root_file}")
